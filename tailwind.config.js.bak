@@ -1,0 +1,25 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#000000",
+        "background-light": "#ffffff",
+        "background-dark": "#121212",
+        "grid-line-light": "#000000",
+        "grid-line-dark": "#333333",
+      },
+      fontFamily: {
+        display: ['"Space Mono"', "monospace"],
+      },
+      borderRadius: {
+        DEFAULT: "0px",
+      },
+      fontSize: {
+        'xxs': '0.65rem',
+      }
+    },
+  },
+  plugins: [],
+}

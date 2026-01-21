@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task List Canvas View</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#000000", // Stark black for primary actions/blocks
+              "background-light": "#ffffff",
+              "background-dark": "#121212",
+              "grid-line-light": "#000000",
+              "grid-line-dark": "#333333",
+            },
+            fontFamily: {
+              display: ['"Space Mono"', "monospace"],
+            },
+            borderRadius: {
+              DEFAULT: "0px", // Brutalist design typically uses sharp corners
+            },
+            fontSize: {
+              'xxs': '0.65rem',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc; 
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #444; 
+        }.brutalist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+        }
+        @media (min-width: 640px) {
+            .brutalist-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        @media (min-width: 768px) {
+            .brutalist-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .brutalist-grid {
+                grid-template-columns: repeat(12, 1fr);}
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-primary dark:text-gray-100 font-display antialiased overflow-x-hidden transition-colors duration-300">
+<div class="fixed top-6 left-6 z-50">
+<button class="bg-background-light dark:bg-background-dark border border-primary dark:border-gray-400 p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all duration-150">
+<span class="material-icons text-xl">menu</span>
+</button>
+</div>
+<main class="w-full min-h-screen p-1 bg-grid-line-light dark:bg-grid-line-dark transition-colors duration-300">
+<div class="brutalist-grid bg-grid-line-light dark:bg-grid-line-dark">
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>01</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="font-bold line-clamp-3">Update Q4 financial projections</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>02</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Finalize brand guidelines</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>03</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Email marketing team regarding feedback</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>04</span>
+<span class="material-icons text-[10px]">warning</span>
+</div>
+<p class="line-clamp-3">Review server logs for Q3 errors</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>05</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Schedule kick-off with design agency</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>06</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Approve pending PTO requests</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>07</span>
+<span class="material-icons text-[10px]">edit</span>
+</div>
+<p class="line-clamp-3">Draft copy for landing page v2</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>08</span>
+<span class="material-icons text-[10px]">bug_report</span>
+</div>
+<p class="line-clamp-3">Fix CSS overflow bug on mobile</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>09</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Conduct user interviews (Batch 3)</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>10</span>
+<span class="material-icons text-[10px]">schedule</span>
+</div>
+<p class="line-clamp-3">Renew domain subscriptions</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>11</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Archive legacy project repositories</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>12</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Prepare slide deck for board meeting</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>13</span>
+<span class="material-icons text-[10px]">lock</span>
+</div>
+<p class="line-clamp-3">Audit internal security protocols</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>14</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Optimize database queries for dashboard</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>15</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Order office supplies: ergonomic chairs</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>16</span>
+<span class="material-icons text-[10px]">description</span>
+</div>
+<p class="line-clamp-3">Update README documentation for API</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>17</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Sync with product owner on roadmap</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>18</span>
+<span class="material-icons text-[10px]">lightbulb</span>
+</div>
+<p class="line-clamp-3">Brainstorm Q1 campaign concepts</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>19</span>
+<span class="material-icons text-[10px]">undo</span>
+</div>
+<p class="line-clamp-3">Revert deployment #4092</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>20</span>
+<span class="material-icons text-[10px]">trending_down</span>
+</div>
+<p class="line-clamp-3">Check analytics for conversion drop</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>21</span>
+<span class="material-icons text-[10px]">attach_money</span>
+</div>
+<p class="line-clamp-3">Send invoice to Client X</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>22</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Refactor authentication module</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>23</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">QA test release candidate 2.1</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>24</span>
+<span class="material-icons text-[10px]">save</span>
+</div>
+<p class="line-clamp-3">Backup staging environment</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>25</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Research competitor pricing models</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>26</span>
+<span class="material-icons text-[10px]">contacts</span>
+</div>
+<p class="line-clamp-3">Update team contact directory</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>27</span>
+<span class="material-icons text-[10px]">check_box_outline_blank</span>
+</div>
+<p class="line-clamp-3">Clean up Jira backlog</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>28</span>
+<span class="material-icons text-[10px]">folder</span>
+</div>
+<p class="line-clamp-3">Organize drive folders</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 text-xxs leading-tight flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors group cursor-pointer overflow-hidden">
+<div class="flex justify-between w-full opacity-30 group-hover:opacity-100 transition-opacity">
+<span>29</span>
+<span class="material-icons text-[10px]">person_search</span>
+</div>
+<p class="line-clamp-3">Review intern applications</p>
+</div>
+<div class="bg-background-light dark:bg-background-dark aspect-square p-2 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group relative overflow-hidden">
+<span class="material-icons text-3xl group-hover:scale-110 transition-transform duration-200 text-gray-400 group-hover:text-primary dark:group-hover:text-white">add</span>
+<span class="mt-1 text-[0.5rem] font-bold uppercase tracking-widest border-b border-primary dark:border-white pb-0.5">New Entry</span>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full bg-primary text-white text-xs p-1 font-mono uppercase tracking-widest flex justify-between z-40">
+<span>System Status: Online</span>
+<span>Grid: High Density</span>
+<span>V 2.2.0</span>
+</div>
+</main>
+<script>
+        // Simple logic to toggle dark mode for demonstration
+        // The user can add a toggle button, but this ensures it respects system preferences initially
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+
+</body></html>

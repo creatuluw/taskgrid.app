@@ -1,0 +1,56 @@
+@import "tailwindcss" layer(theme);
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@theme {
+  --color-primary: #000000;
+  --color-background-light: #ffffff;
+  --color-background-dark: #121212;
+  --color-grid-line-light: #000000;
+  --color-grid-line-dark: #333333;
+  --color-gray-400: #9ca3af;
+  
+  --font-display: "Space Mono", monospace;
+  
+  --radius-DEFAULT: 0px;
+  
+  --font-size-xxs: 0.65rem;
+  
+  --shadow-default: 4px 4px 0px 0px rgba(0,0,0,1);
+  --shadow-dark: 4px 4px 0px 0px rgba(255,255,255,0.5);
+  --shadow-hover: 2px 2px 0px 0px rgba(0,0,0,1);
+  --shadow-dark-hover: 2px 2px 0px 0px rgba(255,255,255,0.5);
+  
+  --color-gray-100: #f3f4f6;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+}
+
+/* Dark mode overrides for class-based dark mode */
+.dark .bg-background-light {
+  background-color: #121212 !important;
+}
+
+.dark .bg-grid-line-light {
+  background-color: #333333 !important;
+}
+
+.dark .dark\:bg-background-dark {
+  background-color: #121212 !important;
+}
+
+.dark .dark\:bg-grid-line-dark {
+  background-color: #333333 !important;
+}
+
+.dark .dark\:border-gray-400 {
+  border-color: #9ca3af !important;
+}
+
+.dark .dark\:shadow-\[4px_4px_0px_0px_rgba\(255\,255\,255\,0\.5\)\] {
+  box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.5) !important;
+}
+
+.dark .dark\:shadow-\[2px_2px_0px_0px_rgba\(255\,255\,255\,0\.5\)\] {
+  box-shadow: 2px 2px 0px 0px rgba(255, 255, 255, 0.5) !important;
+}

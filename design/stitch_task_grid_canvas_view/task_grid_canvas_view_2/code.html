@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Grid Canvas</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb", // Blue-600: Strong enough for light/dark
+                        "background-light": "#ffffff",
+                        "background-dark": "#0a0a0a",
+                        "surface-light": "#f5f5f5",
+                        "surface-dark": "#171717",
+                    },
+                    fontFamily: {
+                        display: ["Space Mono", "monospace"],
+                        body: ["Space Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px", // Keeping it sharp/square as per reference image
+                    },
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        .redacted {
+            background-color: currentColor;
+            color: transparent;
+            user-select: none;
+            padding: 0 2px;
+        }.cell-inverted {
+            @apply bg-black text-white dark:bg-white dark:text-black;
+        }.grid-container {border-top: 1px solid black;
+            border-left: 1px solid black;
+        }
+        .dark .grid-container {
+            border-top-color: #333;
+            border-left-color: #333;
+        }.grid-cell {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+        .dark .grid-cell {
+            border-right-color: #333;
+            border-bottom-color: #333;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-black dark:text-gray-300 font-body antialiased min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
+<div class="fixed bottom-6 right-6 z-50">
+<button class="bg-primary text-white p-4 rounded-full shadow-lg hover:brightness-110 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:ring-offset-background-dark">
+<span class="material-icons-outlined block">menu</span>
+</button>
+</div>
+<div class="fixed bottom-6 left-6 z-50 flex space-x-2 bg-white dark:bg-black border border-black dark:border-gray-700 p-1">
+<button class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white">
+<span class="material-icons-outlined text-sm">remove</span>
+</button>
+<div class="w-px bg-black dark:bg-gray-700"></div>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white">
+<span class="material-icons-outlined text-sm">add</span>
+</button>
+</div>
+<main class="w-full flex-grow">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 grid-container">
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>VitaPharm (VITM)<br/>
+<span class="text-red-600 dark:text-red-400">↓15.45 (19.7%)</span></p>
+<p class="mt-4">Health One (HTHO)<br/>
+<span class="text-red-600 dark:text-red-400">↓5.75 (6.8%)</span></p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Polio, meningococcal disease, diphtheria.</p>
+<p class="mt-auto opacity-50">#archive</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Yesterday afternoon I spotted the graffiti "STAND" stenciled on the corporate headquarters.</p>
+<div class="w-full h-1 bg-primary/20 mt-2">
+<div class="h-full bg-primary w-1/3"></div>
+</div>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex items-center justify-center bg-black text-white dark:bg-white dark:text-black">
+<p class="text-center italic">[gurgling]</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Marina was given one week to sanitize all mentions of "underserved" from her <span class="redacted">publications</span>.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>"You need an appointment," said the clerk, as he stamped REJECTED across Ann's name change documents.</p>
+<span class="font-bold">STATUS: DENIED</span>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Rhea was terminated from the National Park Service. Note the use of passive voice.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Verinex (VRIN)<br/>
+<span class="text-red-600 dark:text-red-400">↓10.40 (22.4%)</span></p>
+<p class="mt-4">Premier Group (PMRG)<br/>
+<span class="text-red-600 dark:text-red-400">↓25.85 (14.9%)</span></p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex items-end hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>mud<br/>dances on<br/>their light</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>How many banned books have they read? How many have you written?</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Alaya spent another Tuesday bouncing between offices, each one claiming another could correct her records. No one did.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p class="font-bold">50 grade school children executed in Santa Monica with a 45-caliber Springfield semiautomatic.</p>
+<p class="mt-2 text-gray-500">Elon Musk calls the shooting a hoax.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>The uniformed agent searched Tony's phone and scanned his X posts.</p>
+<span class="material-icons-outlined text-lg mt-auto text-primary">smartphone</span>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Zahra Abadi was transferred to an overseas prison and kept in isolation without explanation.</p>
+<div class="mt-auto flex gap-1">
+<span class="block w-2 h-2 bg-black dark:bg-white rounded-full"></span>
+<span class="block w-2 h-2 bg-black dark:bg-white rounded-full"></span>
+<span class="block w-2 h-2 bg-black dark:bg-white rounded-full"></span>
+</div>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>In Florida, a pastor succeeded in getting 512 library books investigated.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p class="uppercase tracking-widest font-bold border-b-2 border-primary pb-1">Speak Out.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>A masked ICE agent shot and killed a journalist yesterday evening. Fans hailed the agent as a hero on X.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>HorizonDirect (HZND)<br/>
+<span class="text-red-600 dark:text-red-400">↓20.65 (20.8%)</span></p>
+<p class="mt-4">Metro Assured (META)<br/>
+<span class="text-green-600 dark:text-green-400">↑15.35 (0.4%)</span></p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<img alt="Abstract placeholder image" class="opacity-50 grayscale dark:invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhJEpf4iTrPvjH60BTjwuK3SkTkLRrXLv4hOTsFd1Dd9GcUZI5b1s3hMnyqSIPEns-bLl76AiEwt3JP2U-HzO4x6PLIlggThIdsSiKXwS1YUtm_nMTOJTeTg0uV2M78nkpO_LlZIfkXeu24gD5Pu_tb4WK_C_R4GRqHBjoWq3mbvyo3HqIglXqyAK2XbPnoE0-Hbj97OIAn-JcT_a4kaJDBn6ReM0BkKlePjtLrwS9j1wufw1juYPvHctOw4wWUaJ1f3wi-Io2mas"/>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>A child asked why their favorite picture book was inappropriate. The librarian said, "Some books are not for children."</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex items-center justify-center bg-black text-white dark:bg-white dark:text-black">
+<p class="text-center italic">[buzzing grows louder]</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>The housing application rejected Steve's paperwork for "insufficient documentation." The twelfth time this year.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>When the agents surrounded the building, Malcolm tried to call a <span class="redacted">lawyer</span>, but they confiscated his phone.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-end hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p class="font-bold">installation</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Aidan's birth certificate change was denied. The letter cited "procedural inconsistencies".</p>
+<div class="flex items-center space-x-1 text-gray-400">
+<span class="material-icons-outlined text-sm">attachment</span>
+<span>docs.pdf</span>
+</div>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Flu, hepatitis B.<br/>Mumps.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>The shell casing dropped to the concrete, the word "delay" scrawled on it with a red Sharpie.</p>
+<span class="block w-4 h-4 rounded-full bg-red-600"></span>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Marie stood at the counter as the official deleted her identity on the form. "We only accept original documents."</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>15 preschoolers gunned down in Fort Worth. Alex Jones says the victims should have learned CPR.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>PetroPath (PETP)<br/>
+<span class="text-green-600 dark:text-green-400">↑5.00 (16.3%)</span></p>
+<p class="mt-4">ArchiGrid (ARCHG)<br/>
+<span class="text-green-600 dark:text-green-400">↑20.90 (20.9%)</span></p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-center bg-black text-white dark:bg-white dark:text-black">
+<p class="text-center italic">[whispering in Latin]</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Rage.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Under pressure from Chris Rufo, the school board cleared the elementary school bookshelves.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>"It's out of my hands," said the clerk, as he stamped DENIED.</p>
+<span class="font-mono text-gray-400">ID: 994-22-1</span>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>The clocks stop at 12:20 am.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Hopeless.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>With sweet fury Leland read poetry at an underground meeting where everyone wore masks.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Synthsync (SYNS)<br/>
+<span class="text-green-600 dark:text-green-400">↑9.75 (4.2%)</span></p>
+<p class="mt-4">RoboMesh (ROBM)<br/>
+<span class="text-red-600 dark:text-red-400">↓3.55 (0.1%)</span></p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>More documents were released today. Including photos of <span class="redacted">President</span> and <span class="redacted">Epstein</span> on a private jet.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Armed federal agents arrested the representative when she tried to enter the detention center.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>"Terrorism is economy," someone said.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-center bg-black text-white dark:bg-white dark:text-black">
+<p class="text-center italic">[fizzing]</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>After years of research, Cash was told that her sociology analysis was politically untenable.</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>JD Vance tweeted about purchasing Canada and putting a trampoline park there.</p>
+<span class="material-icons-outlined text-sm self-end">share</span>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<p>Heavenly's birth certificate change was denied. The letter cited "procedural inconsistencies".</p>
+</div>
+<div class="grid-cell h-48 p-4 text-xs flex flex-col justify-center items-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+<div class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 mb-2"></div>
+<p class="text-gray-400">Loading more data...</p>
+</div>
+<div class="grid-cell h-48 p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors group relative">
+<span class="material-icons-outlined text-6xl text-primary group-hover:scale-110 transition-transform">add</span>
+<span class="mt-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">New Entry</span>
+</div>
+</div>
+</main>
+<script>
+        // Simple dark mode toggle logic for demonstration purposes (optional but good practice)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</body></html>

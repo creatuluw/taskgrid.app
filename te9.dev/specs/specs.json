@@ -1,0 +1,22 @@
+{
+  "specs": [
+    {
+      "id": "SPEC-1768932478-TASKGRID",
+      "title": "Update TaskGrid to Brutalist Design",
+      "state": "IN_PROGRESS",
+      "created_at": "2025-01-20T19:01:18Z",
+      "updated_at": "2025-01-20T19:02:00Z",
+      "type": "feature",
+      "priority": "medium"
+    },
+    {
+      "id": "SPEC-1737400800-0875b1c7",
+      "title": "Convert to SvelteKit 2 with SQLite Backend",
+      "state": "IN_PROGRESS",
+      "created_at": "2025-01-20T19:20:00Z",
+      "updated_at": "2025-01-20T19:22:00Z",
+      "type": "refactor",
+      "priority": "high"
+    }
+  ]
+}
