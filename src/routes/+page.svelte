@@ -1,10 +1,22 @@
 <script lang="ts">
 	import { open, ask } from '@tauri-apps/plugin-dialog';
-	import { readDir, exists, mkdir, readTextFile, lstat, writeTextFile } from '@tauri-apps/plugin-fs';
+	import { readDir, exists, mkdir, readTextFile, lstat, writeTextFile, remove } from '@tauri-apps/plugin-fs';
 	import FileTree from '../components/FileTree.svelte';
 	import OpenRouterConfig from '../components/OpenRouterConfig.svelte';
-	import { FolderOpen, FileText, BotMessageSquare, X, Settings, Search, MessageSquare, Plus, Zap, FolderTree, BookOpen, File, FolderPlus, Trash2, Folder as FolderIcon, Edit, Save } from 'lucide-svelte';
+	import { FolderOpen, FileText, BotMessageSquare, X, Settings, Search, MessageSquare, Plus, Zap, FolderTree, BookOpen, File, FolderPlus, Trash2, Folder as FolderIcon, Edit, Save, Brain } from 'lucide-svelte';
 	import { loadConfig, sendChatMessage, getChatContext, type ChatMessage, type FileOperation as FSFileOperation } from '../lib/openrouter';
+	import { marked, Renderer } from 'marked';
+	import hljs from 'highlight.js';
+
+	const renderer = new Renderer();
+	renderer.code = function({ text, lang }) {
+		if (lang && hljs.getLanguage(lang)) {
+			return `<pre><code class="hljs">${hljs.highlight(text, { language: lang }).value}</code></pre>`;
+		}
+		return `<pre><code class="hljs">${hljs.highlightAuto(text).value}</code></pre>`;
+	};
+
+	marked.use({ renderer });
 
 	interface FileNode {
 		name: string;
@@ -58,6 +70,26 @@
 	let editingContent = $state('');
 	let chatInputRef: HTMLInputElement;
 	let chatMessagesRef: HTMLDivElement;
+	let showSkillDialog = $state(false);
+	let selectedSkill = $state<{ name: string; description: string; content: string } | null>(null);
+	let availableSkills = $state<{ name: string; description: string; path: string }[]>([]);
+
+	function loadSavedSizes() {
+		try {
+			const savedSidebarWidth = localStorage.getItem('sidebarWidth');
+			const savedChatPaneWidth = localStorage.getItem('chatPaneWidth');
+			if (savedSidebarWidth) {
+				sidebarWidth = parseFloat(savedSidebarWidth);
+			}
+			if (savedChatPaneWidth) {
+				chatPaneWidth = parseFloat(savedChatPaneWidth);
+			}
+		} catch (error) {
+			console.error('Error loading saved sizes:', error);
+		}
+	}
+
+	loadSavedSizes();
 
 	async function selectDirectory() {
 		const selected = await open({
@@ -111,6 +143,49 @@
 		}
 	}
 
+	async function copyAppSkillsToWorkspace() {
+		const workspaceSkillsPath = `${workingDirectory}/.taskgrid/skills`;
+
+		try {
+			const skillsList = ['about-taskgrid', 'skill-creator', 'task-clarification', 'task-creation'];
+
+			for (const skillName of skillsList) {
+				const skillDir = `${workspaceSkillsPath}/${skillName}`;
+				await mkdir(skillDir, { recursive: true });
+
+				const skillManifest = await fetch(`/skills/${skillName}/SKILL.md`);
+				if (skillManifest.ok) {
+					const manifestContent = await skillManifest.text();
+					await writeTextFile(`${skillDir}/SKILL.md`, manifestContent);
+				}
+
+				const references = await fetch(`/skills/${skillName}/references/`);
+				if (references.ok) {
+					const refsHtml = await references.text();
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(refsHtml, 'text/html');
+					const links = doc.querySelectorAll('a[href]');
+
+					for (const link of Array.from(links)) {
+						const fileName = link.getAttribute('href');
+						if (fileName && !fileName.startsWith('..')) {
+							const fileResponse = await fetch(`/skills/${skillName}/references/${fileName}`);
+							if (fileResponse.ok) {
+								const fileContent = await fileResponse.text();
+								await mkdir(`${skillDir}/references`, { recursive: true });
+								await writeTextFile(`${skillDir}/references/${fileName}`, fileContent);
+							}
+						}
+					}
+				}
+			}
+
+			console.log('Skills copied successfully');
+		} catch (error) {
+			console.error('Error copying app skills to workspace:', error);
+		}
+	}
+
 	async function initWorkspace() {
 		const taskgridDir = `${workingDirectory}/.taskgrid`;
 
@@ -129,12 +204,12 @@
 						const folderPath = `${taskgridDir}/${folder}`;
 						await mkdir(folderPath, { recursive: true });
 					}
-					
+
 					const readmePath = `${taskgridDir}/README.md`;
 					await writeTextFile(readmePath, '# TaskGrid Workspace\n\nThis directory contains your TaskGrid workspace data.\n\n## Directories\n- `/project`: Project files\n- `/tasks`: Task definitions\n- `/skills`: AI skills and agents\n- `/config`: Configuration files\n- `/wiki`: Documentation and notes\n- `/logs`: Application logs\n- `/logic`: Custom logic files\n');
-					
-					await copySkillsFolder();
-					
+
+					await copyAppSkillsToWorkspace();
+
 					await loadFileTree();
 					await loadOpenRouterConfig();
 				} catch (error) {
@@ -267,6 +342,15 @@
 		editingContent = '';
 	}
 
+	function isMarkdownFile(filename: string): boolean {
+		return filename.toLowerCase().endsWith('.md');
+	}
+
+	function removeFrontmatter(content: string): string {
+		const frontmatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/;
+		return content.replace(frontmatterRegex, '');
+	}
+
 	function startResize(e: MouseEvent, target: 'sidebar' | 'chat') {
 		isResizing = true;
 		resizeTarget = target;
@@ -297,10 +381,124 @@
 		resizeTarget = null;
 		document.removeEventListener('mousemove', handleResize);
 		document.removeEventListener('mouseup', stopResize);
+		
+		try {
+			localStorage.setItem('sidebarWidth', sidebarWidth.toString());
+			localStorage.setItem('chatPaneWidth', chatPaneWidth.toString());
+		} catch (error) {
+			console.error('Error saving sizes:', error);
+		}
 	}
 
 	async function loadOpenRouterConfig() {
 		openrouterConfig = await loadConfig(workingDirectory);
+	}
+
+	async function loadAvailableSkills() {
+		const skillsDir = `${workingDirectory}/.taskgrid/skills`;
+		
+		try {
+			const skills: { name: string; description: string; path: string }[] = [];
+			
+			const skillsDirExists = await exists(skillsDir);
+			if (skillsDirExists) {
+				const entries = await readDir(skillsDir);
+				for (const entry of entries) {
+					if (entry.name) {
+						const entryPath = `${skillsDir}/${entry.name}`;
+						const stats = await lstat(entryPath);
+						if (stats.isDirectory) {
+							const skillPath = `${entryPath}/SKILL.md`;
+							const skillExists = await exists(skillPath);
+							if (skillExists) {
+								const content = await readTextFile(skillPath);
+								const match = content.match(/name:\s*(.+?)\n/);
+								const descMatch = content.match(/description:\s*(.+?)\n/);
+								skills.push({
+									name: match ? match[1].trim() : entry.name,
+									description: descMatch ? descMatch[1].trim() : 'No description available',
+									path: skillPath
+								});
+							}
+						}
+					}
+				}
+			}
+			
+			availableSkills = skills;
+		} catch (error) {
+			console.error('Error loading skills:', error);
+			availableSkills = [];
+		}
+	}
+
+	async function selectSkill(skillPath: string) {
+		try {
+			const content = await readTextFile(skillPath);
+			const nameMatch = content.match(/name:\s*(.+?)\n/);
+			const descMatch = content.match(/description:\s*(.+?)\n/);
+			selectedSkill = {
+				name: nameMatch ? nameMatch[1].trim() : 'Unknown Skill',
+				description: descMatch ? descMatch[1].trim() : 'No description',
+				content
+			};
+			showSkillDialog = false;
+			
+			await sendSkillSummary();
+		} catch (error) {
+			console.error('Error loading skill:', error);
+		}
+	}
+
+	async function sendSkillSummary() {
+		if (!selectedSkill || !openrouterConfig) return;
+		
+		const summaryMessage: ChatMessage = {
+			role: 'system',
+			content: `<skill_content name="${selectedSkill.name}">\n${selectedSkill.content}\n</skill_content>`
+		};
+		
+		const userPrompt: ChatMessage = {
+			role: 'user',
+			content: 'A new skill has been loaded. Please summarize what skills and capabilities you have acquired from this skill in 2-3 sentences. Keep it concise and helpful for the user.'
+		};
+		
+		try {
+			const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${openrouterConfig.openrouter.apiKey}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					model: openrouterConfig.openrouter.model,
+					messages: [summaryMessage, userPrompt]
+				})
+			});
+			
+			if (response.ok) {
+				const data = await response.json();
+				const summary = data.choices[0].message.content;
+				
+				messages = [...messages, {
+					role: 'assistant',
+					content: `🧠 **Skill Loaded: ${selectedSkill.name}**\n\n${summary}`
+				}];
+			}
+		} catch (error) {
+			console.error('Error generating skill summary:', error);
+		}
+	}
+
+	function clearSkill() {
+		selectedSkill = null;
+	}
+
+	function toggleSkillDialog() {
+		if (!showSkillDialog) {
+			loadAvailableSkills();
+		}
+		showSkillDialog = !showSkillDialog;
 	}
 
 	async function sendMessage() {
@@ -326,8 +524,16 @@
 				throw new Error('Model is not selected. Please configure it first.');
 			}
 
-			const contextMessages = await getChatContext(workingDirectory, chatHistory);
+			let contextMessages = await getChatContext(workingDirectory, chatHistory);
 			const operations: FSFileOperation[] = [];
+			
+			if (selectedSkill) {
+				const skillSystemMessage = {
+					role: 'system' as const,
+					content: `<skill_content name="${selectedSkill.name}">\n${selectedSkill.content}\n</skill_content>`
+				};
+				contextMessages = [skillSystemMessage, ...contextMessages];
+			}
 
 			const onFileOperation = (operation: FSFileOperation) => {
 				operations.push(operation);
@@ -360,9 +566,6 @@
 	}
 
 	function toggleChatPane() {
-		if (!chatPaneOpen) {
-			chatPaneWidth = 35;
-		}
 		chatPaneOpen = !chatPaneOpen;
 	}
 
@@ -392,13 +595,13 @@
   <!-- Left Sidebar -->
   <div class="flex" style="width: {sidebarWidth}%;">
     <!-- Sidebar Content -->
-    <div class="bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 overflow-y-auto flex flex-col flex-1">
-      <div class="p-3 border-b border-gray-200 dark:border-gray-800">
+    <div class="bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col flex-1 h-full overflow-hidden">
+      <div class="p-4 border-b border-gray-200 dark:border-gray-800">
         <h2 class="font-semibold text-gray-700 dark:text-gray-200 text-sm">Workspace</h2>
         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{workingDirectory || 'No workspace selected'}</p>
       </div>
 
-      <div class="flex-1 p-2">
+      <div class="flex-1 p-4 overflow-y-auto">
         {#each fileTree as node}
           <FileTree {node} depth={0} onSelect={handleFileSelect} />
         {/each}
@@ -450,98 +653,147 @@
       </div>
     {/if}
 
-    <div class="flex-1 flex flex-col bg-white dark:bg-gray-900">
-      {#if tabs.length > 0}
-        <!-- Tab Bar -->
-        <div class="flex items-center border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-x-auto">
-          {#each tabs as tab}
-            <div
-              class="flex items-center gap-2 px-4 py-2 text-sm border-r border-gray-200 dark:border-gray-700 cursor-pointer select-none whitespace-nowrap {activeTabId === tab.id
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-t-2 border-t-blue-500'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}"
-              onclick={() => switchTab(tab.id)}
-            >
-              <span class="truncate max-w-[200px]">{tab.name}</span>
-              <button
-                onclick={(e) => closeTab(tab.id, e)}
-                class="ml-1 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                title="Close tab"
-              >
-                <X size={14} />
-              </button>
+    <!-- Skill Selection Dialog -->
+    {#if showSkillDialog}
+      <div class="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto m-4">
+          <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-2">
+              <Brain size={20} class="text-purple-600 dark:text-purple-400" />
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Select a Skill</h2>
             </div>
-          {/each}
-        </div>
-
-        <!-- Tab Content -->
-        {#each tabs as tab}
-          {#if tab.id === activeTabId}
-            <div class="flex-1 overflow-auto p-6">
-              <div class="mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <h2 class="font-semibold text-gray-700 dark:text-gray-200">{tab.path}</h2>
-                <div class="flex items-center gap-1">
-                  {#if !isEditing}
-                    <button
-                      onclick={startEdit}
-                      class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                      title="Edit file"
-                    >
-                      <Edit size={16} class="text-gray-500 dark:text-gray-400" />
-                    </button>
-                    <button
-                      onclick={() => deleteFile(tab.id)}
-                      class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                      title="Delete file"
-                    >
-                      <Trash2 size={16} class="text-gray-500 dark:text-gray-400" />
-                    </button>
-                  {:else}
-                    <button
-                      onclick={saveEdit}
-                      class="p-1 hover:bg-green-200 dark:hover:bg-green-700 rounded"
-                      title="Save"
-                    >
-                      <Save size={16} class="text-green-600 dark:text-green-400" />
-                    </button>
-                    <button
-                      onclick={cancelEdit}
-                      class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                      title="Cancel"
-                    >
-                      <X size={16} class="text-gray-500 dark:text-gray-400" />
-                    </button>
-                  {/if}
-                </div>
-              </div>
-              {#if isEditing}
-                <textarea
-                  bind:value={editingContent}
-                  class="w-full h-full min-h-[500px] p-4 font-mono text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  placeholder="Edit file content..."
-                ></textarea>
-              {:else}
-                <pre class="whitespace-pre-wrap font-mono text-sm text-gray-800 dark:text-gray-200">{tab.content}</pre>
-              {/if}
-            </div>
-          {/if}
-        {/each}
-      {:else}
-        <div class="flex-1 flex items-center justify-center p-8">
-          {#if !workingDirectory}
-            <button
-              onclick={selectDirectory}
-              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-            >
-              Select Workspace
+            <button onclick={toggleSkillDialog} class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+              <X size={20} class="text-gray-500 dark:text-gray-400" />
             </button>
-          {:else}
-            <div class="grid grid-cols-3 gap-6 max-w-3xl w-full">
-              <!-- Create Task Card -->
-              <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-lg hover:border-green-500 dark:hover:border-green-500 transition-all cursor-pointer relative">
-                <Plus size={20} class="absolute top-3 right-3 text-green-600 dark:text-green-400" />
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Create Task</h3>
-                <p class="text-xs text-gray-600 dark:text-gray-400">Create new tasks</p>
+          </div>
+          <div class="p-4">
+            {#if availableSkills.length === 0}
+              <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <Brain size={48} class="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+                <p class="text-lg mb-2">No skills available</p>
+                <p class="text-sm">Skills will appear in your workspace's .taskgrid/skills or .agents/skills folder</p>
               </div>
+            {:else}
+              <div class="space-y-3">
+                {#each availableSkills as skill}
+                  <div
+                    class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 cursor-pointer transition-all"
+                    onclick={() => selectSkill(skill.path)}
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-1">{skill.name}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{skill.description}</p>
+                      </div>
+                      <Zap size={16} class="text-purple-500 dark:text-purple-400 mt-1 ml-2 shrink-0" />
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
+        </div>
+      </div>
+    {/if}
+
+     <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+       {#if tabs.length > 0}
+         <!-- Tab Bar -->
+         <div class="flex items-center border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-x-auto">
+           {#each tabs as tab}
+             <div
+               class="flex items-center gap-2 px-4 py-2 text-sm border-r border-gray-200 dark:border-gray-700 cursor-pointer select-none whitespace-nowrap {activeTabId === tab.id
+                 ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-t-2 border-t-blue-500'
+                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}"
+               onclick={() => switchTab(tab.id)}
+             >
+             <span class="truncate max-w-[200px]">{tab.name}</span>
+             <button
+               onclick={(e) => closeTab(tab.id, e)}
+               class="ml-1 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+               title="Close tab"
+             >
+               <X size={14} />
+             </button>
+           </div>
+           {/each}
+         </div>
+
+         <!-- Tab Content -->
+         {#each tabs as tab}
+           {#if tab.id === activeTabId}
+             <div class="flex-1 min-h-0 overflow-y-auto p-6">
+               <div class="mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                 <h2 class="font-semibold text-gray-700 dark:text-gray-200">{tab.path}</h2>
+                 <div class="flex items-center gap-1">
+                   {#if !isEditing}
+                     <button
+                       onclick={startEdit}
+                       class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                       title="Edit file"
+                     >
+                       <Edit size={16} class="text-gray-500 dark:text-gray-400" />
+                     </button>
+                     <button
+                       onclick={() => deleteFile(tab.id)}
+                       class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                       title="Delete file"
+                     >
+                       <Trash2 size={16} class="text-gray-500 dark:text-gray-400" />
+                     </button>
+                   {:else}
+                     <button
+                       onclick={saveEdit}
+                       class="p-1 hover:bg-green-200 dark:hover:bg-green-700 rounded"
+                       title="Save"
+                     >
+                       <Save size={16} class="text-green-600 dark:text-green-400" />
+                     </button>
+                     <button
+                       onclick={cancelEdit}
+                       class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                       title="Cancel"
+                     >
+                       <X size={16} class="text-gray-500 dark:text-gray-400" />
+                     </button>
+                   {/if}
+                 </div>
+               </div>
+               {#if isEditing}
+                 <textarea
+                   bind:value={editingContent}
+                   class="w-full h-full min-h-[500px] p-4 font-mono text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                   placeholder="Edit file content..."
+                 ></textarea>
+               {:else}
+                  {#if isMarkdownFile(tab.name)}
+                    <div class="markdown-content text-gray-800 dark:text-gray-200 p-6">
+                      {@html marked(removeFrontmatter(tab.content))}
+                    </div>
+                 {:else}
+                   <pre class="whitespace-pre-wrap font-mono text-sm text-gray-800 dark:text-gray-200">{tab.content}</pre>
+                 {/if}
+               {/if}
+             </div>
+           {/if}
+         {/each}
+       {:else}
+         <div class="flex-1 flex items-center justify-center p-8">
+           {#if !workingDirectory}
+             <button
+               onclick={selectDirectory}
+               class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer"
+             >
+               Select Workspace
+             </button>
+           {:else}
+             <div class="grid grid-cols-3 gap-6 max-w-3xl w-full">
+               <!-- Create Task Card -->
+               <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-lg hover:border-green-500 dark:hover:border-green-500 transition-all cursor-pointer relative">
+                 <Plus size={20} class="absolute top-3 right-3 text-green-600 dark:text-green-400" />
+                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Create Task</h3>
+                 <p class="text-xs text-gray-600 dark:text-gray-400">Create new tasks</p>
+               </div>
 
               <!-- Chat Card -->
               <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-lg hover:border-purple-500 dark:hover:border-purple-500 transition-all cursor-pointer relative" onclick={toggleChatPane}>
@@ -602,16 +854,42 @@
             <BotMessageSquare size={16} class="text-gray-700 dark:text-gray-200" />
             <div>
               <h3 class="font-semibold text-gray-700 dark:text-gray-200 text-sm">Chat</h3>
-              {#if openrouterConfig?.openrouter.modelName}
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[150px]">
-                  {openrouterConfig.openrouter.modelName}
-                </p>
-              {:else}
-                <p class="text-xs text-gray-400 dark:text-gray-500">No model selected</p>
-              {/if}
+              <div class="flex items-center gap-2">
+                {#if openrouterConfig?.openrouter.modelName}
+                  <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                    {openrouterConfig.openrouter.modelName}
+                  </p>
+                {:else}
+                  <p class="text-xs text-gray-400 dark:text-gray-500">No model</p>
+                {/if}
+                {#if selectedSkill}
+                  <div class="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                    <Brain size={12} />
+                    <span class="truncate max-w-[100px]">{selectedSkill.name}</span>
+                  </div>
+                {/if}
+              </div>
             </div>
           </div>
           <div class="flex items-center gap-1">
+            {#if selectedSkill}
+              <button
+                onclick={clearSkill}
+                class="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded relative"
+                title={`Active skill: ${selectedSkill.name} (Click to remove)`}
+              >
+                <Brain size={16} class="text-green-600 dark:text-green-400" />
+                <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full"></div>
+              </button>
+            {:else}
+              <button
+                onclick={toggleSkillDialog}
+                class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                title="Load a skill"
+              >
+                <Brain size={16} class="text-gray-500 dark:text-gray-400" />
+              </button>
+            {/if}
             <button
               onclick={toggleConfig}
               class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
@@ -637,9 +915,15 @@
                 <div
                   class="rounded-lg px-3 py-2 text-sm {message.role === 'user'
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}"
+                    : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200'}"
                 >
-                  {message.content}
+                  {#if message.role === 'assistant'}
+                    <div class="markdown-content">
+                      {@html marked(message.content)}
+                    </div>
+                  {:else}
+                    {message.content}
+                  {/if}
                 </div>
                 
                 {#if message.fileOperations && message.fileOperations.length > 0}

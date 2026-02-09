@@ -26,3 +26,521 @@
 .animate-spin {
 	animation: spin 1s linear infinite;
 }
+
+.line-clamp-2 {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.markdown-content {
+	line-height: 1.7;
+	overflow-wrap: break-word;
+}
+
+.markdown-content pre.hljs {
+	background-color: rgb(255 255 255) !important;
+}
+
+.markdown-content pre code.hljs {
+	display: block;
+	overflow-x: auto;
+	padding: 1em;
+	background-color: rgb(255 255 255) !important;
+	color: rgb(31 41 55) !important;
+}
+
+.markdown-content pre code.hljs .hljs-comment,
+.markdown-content pre code.hljs .hljs-quote {
+	color: rgb(107 114 128) !important;
+	font-style: italic;
+}
+
+.markdown-content pre code.hljs .hljs-keyword,
+.markdown-content pre code.hljs .hljs-selector-tag,
+.markdown-content pre code.hljs .hljs-subst {
+	color: rgb(220 38 38) !important;
+	font-weight: bold;
+}
+
+.markdown-content pre code.hljs .hljs-number,
+.markdown-content pre code.hljs .hljs-literal,
+.markdown-content pre code.hljs .hljs-variable,
+.markdown-content pre code.hljs .hljs-template-variable,
+.markdown-content pre code.hljs .hljs-tag .hljs-attr {
+	color: rgb(217 70 239) !important;
+}
+
+.markdown-content pre code.hljs .hljs-string,
+.markdown-content pre code.hljs .hljs-doctag {
+	color: rgb(5 150 105) !important;
+}
+
+.markdown-content pre code.hljs .hljs-title,
+.markdown-content pre code.hljs .hljs-section,
+.markdown-content pre code.hljs .hljs-selector-id {
+	color: rgb(37 99 235) !important;
+	font-weight: bold;
+}
+
+.markdown-content pre code.hljs .hljs-type,
+.markdown-content pre code.hljs .hljs-class .hljs-title {
+	color: rgb(245 158 11) !important;
+}
+
+.markdown-content pre code.hljs .hljs-tag,
+.markdown-content pre code.hljs .hljs-name,
+.markdown-content pre code.hljs .hljs-attribute {
+	color: rgb(31 41 55) !important;
+	font-weight: normal;
+}
+
+.markdown-content pre code.hljs .hljs-regexp,
+.markdown-content pre code.hljs .hljs-link {
+	color: rgb(217 70 239) !important;
+}
+
+.markdown-content pre code.hljs .hljs-symbol,
+.markdown-content pre code.hljs .hljs-bullet {
+	color: rgb(245 158 11) !important;
+}
+
+.markdown-content pre code.hljs .hljs-built_in,
+.markdown-content pre code.hljs .hljs-builtin-name {
+	color: rgb(220 38 38) !important;
+}
+
+.markdown-content pre code.hljs .hljs-meta {
+	color: rgb(107 114 128) !important;
+}
+
+.markdown-content pre code.hljs .hljs-deletion {
+	background-color: rgb(254 226 226) !important;
+}
+
+.markdown-content pre code.hljs .hljs-addition {
+	background-color: rgb(220 252 231) !important;
+}
+
+.markdown-content pre code.hljs .hljs-emphasis {
+	font-style: italic !important;
+}
+
+.markdown-content pre code.hljs .hljs-strong {
+	font-weight: bold !important;
+}
+
+.markdown-content code.hljs {
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	background-color: transparent;
+}
+
+
+
+.markdown-content h1 {
+	font-size: 2em;
+	font-weight: 700;
+	margin-bottom: 0.5em;
+	margin-top: 1.5em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid rgb(229 231 235);
+	color: rgb(31 41 55);
+}
+
+.markdown-content h2 {
+	font-size: 1.5em;
+	font-weight: 600;
+	margin-bottom: 0.5em;
+	margin-top: 1.25em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid rgb(229 231 235);
+	color: rgb(31 41 55);
+}
+
+.markdown-content h3 {
+	font-size: 1.25em;
+	font-weight: 600;
+	margin-bottom: 0.5em;
+	margin-top: 1em;
+	color: rgb(31 41 55);
+}
+
+.markdown-content h4 {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin-bottom: 0.5em;
+	margin-top: 1em;
+	color: rgb(31 41 55);
+}
+
+.markdown-content h5,
+.markdown-content h6 {
+	font-weight: 600;
+	margin-bottom: 0.5em;
+	margin-top: 1em;
+	color: rgb(31 41 55);
+}
+
+.markdown-content p {
+	margin-bottom: 1em;
+	color: rgb(31 41 55);
+}
+
+.markdown-content strong {
+	color: rgb(31 41 55);
+}
+
+.markdown-content ul,
+.markdown-content ol {
+	margin-bottom: 1em;
+	padding-left: 2em;
+}
+
+.markdown-content li {
+	margin-bottom: 0.25em;
+	color: rgb(31 41 55);
+}
+
+.markdown-content :not(pre) > code {
+	background-color: rgb(243 244 246);
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 0.875em;
+	font-family: 'Courier New', Courier, monospace;
+	color: rgb(31 41 55);
+}
+
+.markdown-content pre {
+	border-radius: 6px;
+	overflow-x: auto;
+	margin-bottom: 1em;
+}
+
+.markdown-content pre:not(.hljs) {
+	padding: 1em;
+	background-color: rgb(30 30 30);
+}
+
+.markdown-content pre:not(.hljs) code {
+	padding: 1em;
+}
+
+.markdown-content pre code {
+	background-color: transparent;
+	padding: 0;
+	color: inherit;
+	font-size: 0.875em;
+	font-family: 'Fira Code', 'Courier New', Courier, monospace;
+}
+
+.markdown-content blockquote {
+	border-left: 4px solid rgb(59 130 246);
+	padding-left: 1em;
+	margin: 1em 0;
+	color: rgb(107 114 128);
+}
+
+.markdown-content a {
+	color: rgb(59 130 246);
+	text-decoration: underline;
+}
+
+.markdown-content a:hover {
+	color: rgb(37 99 235);
+}
+
+.markdown-content table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+.markdown-content th,
+.markdown-content td {
+	border: 1px solid rgb(229 231 235);
+	padding: 0.5em;
+	text-align: left;
+	color: rgb(31 41 55);
+}
+
+.markdown-content th {
+	background-color: rgb(249 250 251);
+	font-weight: 600;
+	color: rgb(31 41 55);
+}
+
+.markdown-content img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 6px;
+	margin: 1em 0;
+}
+
+.markdown-content hr {
+	border: none;
+	border-top: 2px solid rgb(229 231 235);
+	margin: 2em 0;
+}
+
+@media (prefers-color-scheme: dark) {
+	.markdown-content h1,
+	.markdown-content h2,
+	.markdown-content h3,
+	.markdown-content h4,
+	.markdown-content h5,
+	.markdown-content h6 {
+		border-bottom-color: rgb(55 65 81);
+		color: rgb(249 250 251);
+	}
+
+	.markdown-content p,
+	.markdown-content strong,
+	.markdown-content li {
+		color: rgb(249 250 251);
+	}
+
+	.markdown-content :not(pre) > code {
+		background-color: rgb(55 65 81);
+		color: rgb(249 250 251);
+	}
+
+	.markdown-content pre.hljs {
+		background-color: rgb(17 24 39) !important;
+	}
+
+	.markdown-content pre code.hljs {
+		background-color: rgb(17 24 39) !important;
+		color: rgb(249 250 251) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-comment,
+	.markdown-content pre code.hljs .hljs-quote {
+		color: rgb(156 163 175) !important;
+		font-style: italic;
+	}
+
+	.markdown-content pre code.hljs .hljs-keyword,
+	.markdown-content pre code.hljs .hljs-selector-tag,
+	.markdown-content pre code.hljs .hljs-subst {
+		color: rgb(248 113 113) !important;
+		font-weight: bold;
+	}
+
+	.markdown-content pre code.hljs .hljs-number,
+	.markdown-content pre code.hljs .hljs-literal,
+	.markdown-content pre code.hljs .hljs-variable,
+	.markdown-content pre code.hljs .hljs-template-variable,
+	.markdown-content pre code.hljs .hljs-tag .hljs-attr {
+		color: rgb(232 121 249) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-string,
+	.markdown-content pre code.hljs .hljs-doctag {
+		color: rgb(74 222 128) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-title,
+	.markdown-content pre code.hljs .hljs-section,
+	.markdown-content pre code.hljs .hljs-selector-id {
+		color: rgb(96 165 250) !important;
+		font-weight: bold;
+	}
+
+	.markdown-content pre code.hljs .hljs-type,
+	.markdown-content pre code.hljs .hljs-class .hljs-title {
+		color: rgb(251 191 36) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-tag,
+	.markdown-content pre code.hljs .hljs-name,
+	.markdown-content pre code.hljs .hljs-attribute {
+		color: rgb(249 250 251) !important;
+		font-weight: normal;
+	}
+
+	.markdown-content pre code.hljs .hljs-regexp,
+	.markdown-content pre code.hljs .hljs-link {
+		color: rgb(232 121 249) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-symbol,
+	.markdown-content pre code.hljs .hljs-bullet {
+		color: rgb(251 191 36) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-built_in,
+	.markdown-content pre code.hljs .hljs-builtin-name {
+		color: rgb(248 113 113) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-meta {
+		color: rgb(156 163 175) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-deletion {
+		background-color: rgb(127 29 29) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-addition {
+		background-color: rgb(22 101 52) !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-emphasis {
+		font-style: italic !important;
+	}
+
+	.markdown-content pre code.hljs .hljs-strong {
+		font-weight: bold !important;
+	}
+
+
+
+	.markdown-content blockquote {
+		color: rgb(156 163 175);
+	}
+
+	.markdown-content th,
+	.markdown-content td {
+		color: rgb(249 250 251);
+		border-color: rgb(55 65 81);
+	}
+
+	.markdown-content th {
+		background-color: rgb(31 41 55);
+	}
+
+	.markdown-content hr {
+		border-top-color: rgb(55 65 81);
+	}
+}
+
+.dark .markdown-content h1,
+.dark .markdown-content h2,
+.dark .markdown-content h3,
+.dark .markdown-content h4,
+.dark .markdown-content h5,
+.dark .markdown-content h6 {
+	border-bottom-color: rgb(55 65 81);
+	color: rgb(249 250 251);
+}
+
+.dark .markdown-content p,
+.dark .markdown-content strong,
+.dark .markdown-content li {
+	color: rgb(249 250 251);
+}
+
+.dark .markdown-content :not(pre) > code {
+		background-color: rgb(55 65 81);
+		color: rgb(249 250 251);
+	}
+
+	.dark .markdown-content pre.hljs {
+		background-color: rgb(17 24 39) !important;
+	}
+
+	.dark .markdown-content pre code.hljs {
+		background-color: rgb(17 24 39) !important;
+		color: rgb(249 250 251) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-comment,
+	.dark .markdown-content pre code.hljs .hljs-quote {
+		color: rgb(156 163 175) !important;
+		font-style: italic;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-keyword,
+	.dark .markdown-content pre code.hljs .hljs-selector-tag,
+	.dark .markdown-content pre code.hljs .hljs-subst {
+		color: rgb(248 113 113) !important;
+		font-weight: bold;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-number,
+	.dark .markdown-content pre code.hljs .hljs-literal,
+	.dark .markdown-content pre code.hljs .hljs-variable,
+	.dark .markdown-content pre code.hljs .hljs-template-variable,
+	.dark .markdown-content pre code.hljs .hljs-tag .hljs-attr {
+		color: rgb(232 121 249) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-string,
+	.dark .markdown-content pre code.hljs .hljs-doctag {
+		color: rgb(74 222 128) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-title,
+	.dark .markdown-content pre code.hljs .hljs-section,
+	.dark .markdown-content pre code.hljs .hljs-selector-id {
+		color: rgb(96 165 250) !important;
+		font-weight: bold;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-type,
+	.dark .markdown-content pre code.hljs .hljs-class .hljs-title {
+		color: rgb(251 191 36) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-tag,
+	.dark .markdown-content pre code.hljs .hljs-name,
+	.dark .markdown-content pre code.hljs .hljs-attribute {
+		color: rgb(249 250 251) !important;
+		font-weight: normal;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-regexp,
+	.dark .markdown-content pre code.hljs .hljs-link {
+		color: rgb(232 121 249) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-symbol,
+	.dark .markdown-content pre code.hljs .hljs-bullet {
+		color: rgb(251 191 36) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-built_in,
+	.dark .markdown-content pre code.hljs .hljs-builtin-name {
+		color: rgb(248 113 113) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-meta {
+		color: rgb(156 163 175) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-deletion {
+		background-color: rgb(127 29 29) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-addition {
+		background-color: rgb(22 101 52) !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-emphasis {
+		font-style: italic !important;
+	}
+
+	.dark .markdown-content pre code.hljs .hljs-strong {
+		font-weight: bold !important;
+	}
+
+	.dark .markdown-content blockquote {
+	color: rgb(156 163 175);
+}
+
+.dark .markdown-content th,
+.dark .markdown-content td {
+	color: rgb(249 250 251);
+	border-color: rgb(55 65 81);
+}
+
+.dark .markdown-content th {
+	background-color: rgb(31 41 55);
+}
+
+.dark .markdown-content hr {
+	border-top-color: rgb(55 65 81);
+}
+
